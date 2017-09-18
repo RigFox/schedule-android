@@ -33,6 +33,7 @@ import xyz.rigfox.schedule_android.models.Teacher;
 public class ScheduleService extends Service {
     public static final String CHECK_OR_DOWNLOAD = "CHECK_OR_DOWNLOAD";
     public static final String CHECK_UPDATE = "CHECK_UPDATE";
+    public static final String RESET = "RESET";
 
     private DaoSession daoSession;
 
@@ -74,6 +75,12 @@ public class ScheduleService extends Service {
                 break;
             case CHECK_UPDATE:
 
+                break;
+            case RESET:
+                DaoMaster.dropAllTables(daoSession.getDatabase(), true);
+                DaoMaster.createAllTables(daoSession.getDatabase(), true);
+
+                checkOrDownload();
                 break;
             default:
                 throw new UnsupportedOperationException("Action unsupported");

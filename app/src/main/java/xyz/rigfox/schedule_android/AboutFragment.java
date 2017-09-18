@@ -1,5 +1,7 @@
 package xyz.rigfox.schedule_android;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,10 +14,24 @@ import xyz.rigfox.schedule_android.models.Setting;
 
 public class AboutFragment extends Fragment {
 
+    Context ctx;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_about, container, false);
+
+        ctx = getContext();
+
+        (view.findViewById(R.id.resetbutton)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent serviceIntent = new Intent(ctx, ScheduleService.class);
+                serviceIntent.setAction(ScheduleService.RESET);
+
+                ctx.startService(serviceIntent);
+            }
+        });
 
         updateFields(view);
 

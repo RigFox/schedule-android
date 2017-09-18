@@ -70,4 +70,12 @@
         android:focusable="false"
         android:longClickable="false" />
 
+    <Button
+        android:id="@+id/resetbutton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Перезагрузить расписание" />
+
+
 </LinearLayout>
