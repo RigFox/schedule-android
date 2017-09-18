@@ -1,0 +1,73 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context="xyz.rigfox.schedule_android.AboutFragment">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Версия приложения" />
+
+    <EditText
+        android:id="@+id/app_version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:cursorVisible="false"
+        android:ems="10"
+        android:focusable="false"
+        android:longClickable="false" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Дата обновления расписания" />
+
+    <EditText
+        android:id="@+id/updated_at"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:cursorVisible="false"
+        android:ems="10"
+        android:focusable="false"
+        android:longClickable="false" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Ревизия расписания" />
+
+    <EditText
+        android:id="@+id/revision"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:cursorVisible="false"
+        android:ems="10"
+        android:focusable="false"
+        android:longClickable="false" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Версия схемы расписания" />
+
+    <EditText
+        android:id="@+id/version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:cursorVisible="false"
+        android:ems="10"
+        android:focusable="false"
+        android:longClickable="false" />
+
+</LinearLayout>

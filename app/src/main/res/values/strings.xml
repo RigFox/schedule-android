@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Мой СиБГУ</string>
+
+    <string name="navigation_drawer_open">Открыть меню</string>
+    <string name="navigation_drawer_close">Закрыть меню</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="main_blank">Тут пока ничего нет! Для просмотра расписания расположите на рабочем столе виджет.</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Добавить виджет</string>
+    <string name="configure">Настроить</string>
+</resources>
