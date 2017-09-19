@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.widget.RemoteViews;
 
 import java.util.Calendar;
@@ -21,7 +20,7 @@ public class ScheduleWidget extends AppWidgetProvider {
     final static String ACTION_BACK = "xyz.rigfox.schedule_androidBack";
     final static String ACTION_TODAY = "xyz.rigfox.schedule_androidToday";
 
-    final static Long MILLISECUNDOFDAY = (long) 86400000;
+    final static Long MILLISECOND_OF_DAY = (long) 86400000;
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
@@ -33,6 +32,7 @@ public class ScheduleWidget extends AppWidgetProvider {
 
     void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                          int appWidgetId) {
+
         RemoteViews rv = new RemoteViews(context.getPackageName(),
                 R.layout.schedule_widget);
 
@@ -87,7 +87,7 @@ public class ScheduleWidget extends AppWidgetProvider {
 
         String numWeek = String.valueOf(weekOfYear) + " неделя";
 
-        rv.setTextViewText(R.id.date, calendar.get(Calendar.DAY_OF_MONTH) + "." + calendar.get(Calendar.MONTH));
+        rv.setTextViewText(R.id.date, calendar.get(Calendar.DAY_OF_MONTH) + "." + (calendar.get(Calendar.MONTH) + 1));
         rv.setTextViewText(R.id.dayOfWeek, dayOfWeekString);
         rv.setTextViewText(R.id.numWeek, numWeek);
 
@@ -104,11 +104,20 @@ public class ScheduleWidget extends AppWidgetProvider {
         rv.setRemoteAdapter(R.id.listView, adapter);
     }
 
-    public void onReceive(@NonNull Context context, @NonNull Intent intent) {
+    public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
+
         int mAppWidgetId;
 
+        if (intent == null) {
+            return;
+        }
+
         Bundle extras = intent.getExtras();
+        if (extras == null) {
+            return;
+        }
+
         mAppWidgetId = extras.getInt(
                 AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID);
@@ -116,61 +125,49 @@ public class ScheduleWidget extends AppWidgetProvider {
         SharedPreferences sp = context.getSharedPreferences(ScheduleWidgetConfigureActivity.PREFS_NAME + mAppWidgetId, 0);
         SharedPreferences.Editor editor = sp.edit();
 
-        if (intent.getAction().equalsIgnoreCase(ACTION_NEXT)) {
-            Long timestamp = sp.getLong(ScheduleWidgetConfigureActivity.PREF_PREFIX_DAY, System.currentTimeMillis());
+        Long timestamp = sp.getLong(ScheduleWidgetConfigureActivity.PREF_PREFIX_DAY, System.currentTimeMillis());
 
-            Date date = new Date(timestamp);
-            GregorianCalendar calendar = new GregorianCalendar();
-            calendar.setTime(date);
+        Date date = new Date(timestamp);
+        GregorianCalendar calendar = new GregorianCalendar();
+        calendar.setTime(date);
 
-            Long addMS = MILLISECUNDOFDAY;
+        Long addMS;
 
-            if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
-                addMS *= 2;
-            }
+        switch (intent.getAction()) {
+            case ACTION_NEXT:
+                addMS = MILLISECOND_OF_DAY;
 
-            editor.putLong(ScheduleWidgetConfigureActivity.PREF_PREFIX_DAY, timestamp + addMS);
-            editor.apply();
+                if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
+                    addMS *= 2;
+                }
 
-            updateAppWidget(context, AppWidgetManager.getInstance(context),
-                    mAppWidgetId);
+                editor.putLong(ScheduleWidgetConfigureActivity.PREF_PREFIX_DAY, timestamp + addMS);
+                editor.apply();
+                break;
+            case ACTION_BACK:
+                addMS = -MILLISECOND_OF_DAY;
+
+                if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
+                    addMS *= 2;
+                }
+
+                editor.putLong(ScheduleWidgetConfigureActivity.PREF_PREFIX_DAY, timestamp + addMS);
+                editor.apply();
+                break;
+            case ACTION_TODAY:
+                timestamp = System.currentTimeMillis();
+
+                if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+                    timestamp += MILLISECOND_OF_DAY;
+                }
+
+                editor.putLong(ScheduleWidgetConfigureActivity.PREF_PREFIX_DAY, timestamp);
+                editor.apply();
+                break;
         }
 
-        if (intent.getAction().equalsIgnoreCase(ACTION_BACK)) {
-            Long timestamp = sp.getLong(ScheduleWidgetConfigureActivity.PREF_PREFIX_DAY, System.currentTimeMillis());
-
-            Date date = new Date(timestamp);
-            GregorianCalendar calendar = new GregorianCalendar();
-            calendar.setTime(date);
-
-            Long addMS = -MILLISECUNDOFDAY;
-
-            if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
-                addMS *= 2;
-            }
-
-            editor.putLong(ScheduleWidgetConfigureActivity.PREF_PREFIX_DAY, timestamp + addMS);
-            editor.apply();
-
-            updateAppWidget(context, AppWidgetManager.getInstance(context),
-                    mAppWidgetId);
-        }
-
-        if (intent.getAction().equalsIgnoreCase(ACTION_TODAY)) {
-            GregorianCalendar calendar = new GregorianCalendar();
-
-            Long timestamp = System.currentTimeMillis();
-
-            if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
-                timestamp += MILLISECUNDOFDAY;
-            }
-
-            editor.putLong(ScheduleWidgetConfigureActivity.PREF_PREFIX_DAY, timestamp);
-            editor.apply();
-
-            updateAppWidget(context, AppWidgetManager.getInstance(context),
-                    mAppWidgetId);
-        }
+        updateAppWidget(context, AppWidgetManager.getInstance(context),
+                mAppWidgetId);
     }
 
     private void setPendingIntent(String Action, int id, Context context, int appWidgetId, RemoteViews rv) {

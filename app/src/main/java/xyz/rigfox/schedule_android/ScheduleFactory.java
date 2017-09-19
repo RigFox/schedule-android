@@ -68,7 +68,15 @@ class ScheduleFactory implements RemoteViewsService.RemoteViewsFactory {
         RemoteViews rView = new RemoteViews(context.getPackageName(),
                 R.layout.schedule_item);
 
-        Schedule currentItem = schedules.get(position);
+        Schedule currentItem;
+
+        try {
+            currentItem = schedules.get(position);
+        } catch (IndexOutOfBoundsException e) {
+            currentItem = new Schedule();
+            currentItem.setSubject_id(-1L);
+        }
+
 
         if (currentItem.getSubject_id() == -1) {
             rView.setTextViewText(R.id.subject, "");

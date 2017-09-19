@@ -9,6 +9,8 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -27,6 +29,43 @@ public class ScheduleWidgetConfigureActivity extends Activity {
     public static final String PREF_PREFIX_DAY = "appwidget_day";
 
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
+
+    private ScheduleSingleton scheduleSingleton;
+
+    public ScheduleWidgetConfigureActivity() {
+        super();
+    }
+
+    @Override
+    public void onCreate(Bundle icicle) {
+        super.onCreate(icicle);
+
+        setResult(RESULT_CANCELED);
+
+        scheduleSingleton = ScheduleSingleton.getInstance();
+
+        if (!scheduleSingleton.checkDB()) {
+            Toast.makeText(this, "Расписание не загружено! Сейчас мы попробуем загрузить его.", Toast.LENGTH_LONG).show();
+            scheduleSingleton.checkOrDownload();
+            finish();
+        }
+
+        setContentView(R.layout.schedule_widget_configure);
+        connectList();
+        ((ListView) findViewById(R.id.group_list)).setOnItemClickListener(GroupListClickListener);
+        ((ListView) findViewById(R.id.teacher_list)).setOnItemClickListener(TeacherListClickListener);
+
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            mAppWidgetId = extras.getInt(
+                    AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+        }
+
+        if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
+            finish();
+        }
+    }
 
     ListView.OnItemClickListener GroupListClickListener = new ListView.OnItemClickListener() {
         @Override
@@ -54,10 +93,20 @@ public class ScheduleWidgetConfigureActivity extends Activity {
         }
     };
 
-    private ScheduleSingleton scheduleSingleton;
+    void connectList() {
+        List<Group> groups = scheduleSingleton.getGroups();
+        GroupAdapter groupAdapter = new GroupAdapter(this, groups);
 
-    public ScheduleWidgetConfigureActivity() {
-        super();
+        ListView lvGroup = findViewById(R.id.group_list);
+        lvGroup.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        lvGroup.setAdapter(groupAdapter);
+
+        List<Teacher> teachers = scheduleSingleton.getTeachers();
+        TeacherAdapter teacherAdapter = new TeacherAdapter(this, teachers);
+
+        ListView lvTeacher = findViewById(R.id.teacher_list);
+        lvTeacher.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        lvTeacher.setAdapter(teacherAdapter);
     }
 
     static void saveGroupPref(Context context, int appWidgetId, int group_id) {
@@ -85,51 +134,6 @@ public class ScheduleWidgetConfigureActivity extends Activity {
     static Integer loadTeacherPref(Context context, int appWidgetId) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME + appWidgetId, 0);
         return prefs.getInt(PREF_PREFIX_TEACHER, -1);
-    }
-
-    @Override
-    public void onCreate(Bundle icicle) {
-        super.onCreate(icicle);
-        setResult(RESULT_CANCELED);
-
-        scheduleSingleton = ScheduleSingleton.getInstance();
-
-        if (!scheduleSingleton.checkDB()) {
-            Toast.makeText(this, "Расписание не загружено! Сейчас мы попробуем загрузить его.", Toast.LENGTH_LONG).show();
-            scheduleSingleton.checkOrDownload();
-        }
-
-        setContentView(R.layout.schedule_widget_configure);
-        connectList();
-        ((ListView) findViewById(R.id.group_list)).setOnItemClickListener(GroupListClickListener);
-        ((ListView) findViewById(R.id.teacher_list)).setOnItemClickListener(TeacherListClickListener);
-
-        Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
-        if (extras != null) {
-            mAppWidgetId = extras.getInt(
-                    AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
-        }
-
-        if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
-            finish();
-        }
-    }
-
-    void connectList() {
-        List<Group> groups = scheduleSingleton.getGroups();
-        GroupAdapter groupAdapter = new GroupAdapter(this, groups);
-
-        ListView lvGroup = findViewById(R.id.group_list);
-        lvGroup.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        lvGroup.setAdapter(groupAdapter);
-
-        List<Teacher> teachers = scheduleSingleton.getTeachers();
-        TeacherAdapter teacherAdapter = new TeacherAdapter(this, teachers);
-
-        ListView lvTeacher = findViewById(R.id.teacher_list);
-        lvTeacher.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        lvTeacher.setAdapter(teacherAdapter);
     }
 }
 

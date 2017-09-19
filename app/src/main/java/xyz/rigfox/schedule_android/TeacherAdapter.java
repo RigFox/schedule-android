@@ -12,15 +12,13 @@ import java.util.List;
 import xyz.rigfox.schedule_android.models.Group;
 import xyz.rigfox.schedule_android.models.Teacher;
 
-public class TeacherAdapter extends BaseAdapter {
-    Context ctx;
-    LayoutInflater lInflater;
-    List<Teacher> objects;
+class TeacherAdapter extends BaseAdapter {
+    private LayoutInflater lInflater;
+    private List<Teacher> objects;
 
     TeacherAdapter(Context context, List<Teacher> teachers) {
-        ctx = context;
         objects = teachers;
-        lInflater = (LayoutInflater) ctx
+        lInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 

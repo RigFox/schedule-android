@@ -11,15 +11,13 @@ import java.util.List;
 
 import xyz.rigfox.schedule_android.models.Group;
 
-public class GroupAdapter extends BaseAdapter {
-    Context ctx;
-    LayoutInflater lInflater;
-    List<Group> objects;
+class GroupAdapter extends BaseAdapter {
+    private LayoutInflater lInflater;
+    private List<Group> objects;
 
     GroupAdapter(Context context, List<Group> groups) {
-        ctx = context;
         objects = groups;
-        lInflater = (LayoutInflater) ctx
+        lInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
