@@ -1,5 +1,6 @@
 package xyz.rigfox.schedule_android;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -26,8 +27,7 @@ public class AboutFragment extends Fragment {
         (view.findViewById(R.id.resetbutton)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity activity = (MainActivity) getActivity();
-                activity.scheduleSingleton.resetDB();
+                ScheduleSingleton.getInstance().resetDB();
             }
         });
 
@@ -37,8 +37,8 @@ public class AboutFragment extends Fragment {
     }
 
     void updateFields(View view) {
-        MainActivity activity = (MainActivity) getActivity();
-        Setting setting = activity.scheduleSingleton.getSetting();
+        Activity activity = getActivity();
+        Setting setting = ScheduleSingleton.getInstance().getSetting();
 
         int version_int = 0;
         int revision_int = 0;
@@ -50,11 +50,11 @@ public class AboutFragment extends Fragment {
             updated_at_text = setting.getUpdated_at();
         }
 
-        String version_text = null;
-
+        String version_text;
         try {
             version_text = activity.getPackageManager().getPackageInfo(activity.getPackageName(), 0).versionName;
         } catch (PackageManager.NameNotFoundException e) {
+            version_text = "Не удалось определить";
             e.printStackTrace();
         }
 
