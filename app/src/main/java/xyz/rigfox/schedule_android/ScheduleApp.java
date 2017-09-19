@@ -7,5 +7,7 @@ public class ScheduleApp extends Application {
     public void onCreate() {
         super.onCreate();
         ScheduleSingleton.initInstance(this);
+        UpdateReceiver updateReceiver = new UpdateReceiver();
+        updateReceiver.setUpdateAlarm(this);
     }
 }

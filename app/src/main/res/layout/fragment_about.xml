@@ -10,11 +10,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Версия приложения" />
+        android:text="@string/app_version_title" />
 
     <EditText
         android:id="@+id/app_version"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:cursorVisible="false"
@@ -26,11 +26,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Дата обновления расписания" />
+        android:text="@string/updated_at_title" />
 
     <EditText
         android:id="@+id/updated_at"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:cursorVisible="false"
@@ -42,11 +42,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Ревизия расписания" />
+        android:text="@string/revision_title" />
 
     <EditText
         android:id="@+id/revision"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:cursorVisible="false"
@@ -58,11 +58,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Версия схемы расписания" />
+        android:text="@string/version_title" />
 
     <EditText
         android:id="@+id/version"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:cursorVisible="false"
@@ -75,7 +75,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Перезагрузить расписание" />
+        android:text="@string/reset_button_title" />
 
 
 </LinearLayout>

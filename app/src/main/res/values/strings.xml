@@ -10,4 +10,9 @@
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Добавить виджет</string>
     <string name="configure">Настроить</string>
+    <string name="updated_at_title">Дата обновления расписания</string>
+    <string name="revision_title">Ревизия расписания</string>
+    <string name="version_title">Версия схемы расписания</string>
+    <string name="reset_button_title">Перезагрузить расписание</string>
+    <string name="app_version_title">Версия приложения</string>
 </resources>

@@ -73,6 +73,11 @@ class ScheduleSingleton {
         checkOrDownload();
     }
 
+    void checkAndDownloadUpdate() {
+        UpdateTask updateTask = new UpdateTask();
+        updateTask.execute();
+    }
+
     Setting getSetting() {
         return daoSession.getSettingDao().queryBuilder().where(SettingDao.Properties.Id.eq(1)).unique();
     }
@@ -117,6 +122,13 @@ class ScheduleSingleton {
 
             try {
                 JSONObject jsonSetting = jsonObject.getJSONObject("setting");
+
+                Setting setting = new Setting(jsonSetting);
+                if (setting.getVersion() != ctx.getResources().getInteger(R.integer.version)) {
+                    Toast.makeText(ctx, "Не удалось загрузить расписание. Обновите приложение!", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 daoSession.getSettingDao().insert(new Setting(jsonSetting));
 
                 JSONArray jsonTeachers = jsonObject.getJSONArray("teachers");
@@ -157,6 +169,44 @@ class ScheduleSingleton {
                 Toast.makeText(ctx, "Расписание успешно загружено!", Toast.LENGTH_LONG).show();
             } catch (JSONException e) {
                 Toast.makeText(ctx, "Ошибка загрузки! Возможно неконсистентное состояние!", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private class UpdateTask extends AsyncTask<Void, Void, JSONObject> {
+        @Override
+        protected JSONObject doInBackground(Void... voids) {
+            try {
+                String JSON = run("http://rasp.sibsu.tk/setting.json");
+
+                return new JSONObject(JSON);
+            } catch (IOException | JSONException e) {
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject jsonObject) {
+            super.onPostExecute(jsonObject);
+
+            if (jsonObject == null) {
+                return;
+            }
+
+            Setting setting = new Setting(jsonObject);
+            if (setting.getVersion() != ctx.getResources().getInteger(R.integer.version)) {
+                Toast.makeText(ctx, "Не удалось обновить расписание. Обновите приложение!", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            if (setting.getRevision() > getSetting().getRevision()) {
+                Toast.makeText(ctx, "Вышло новое обновление!", Toast.LENGTH_LONG).show();
+                resetDB();
             }
         }
     }
