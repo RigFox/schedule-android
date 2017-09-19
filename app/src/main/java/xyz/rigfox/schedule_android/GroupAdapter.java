@@ -39,7 +39,7 @@ class GroupAdapter extends BaseAdapter {
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         if (view == null) {
-            view = lInflater.inflate(R.layout.schedule_widget_configure_item, viewGroup, false);
+            view = lInflater.inflate(R.layout.list_fragment_item, viewGroup, false);
         }
 
         Group g = (Group) getItem(i);

@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import xyz.rigfox.schedule_android.models.Group;
 import xyz.rigfox.schedule_android.models.Teacher;
 
 class TeacherAdapter extends BaseAdapter {
@@ -40,7 +39,7 @@ class TeacherAdapter extends BaseAdapter {
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         if (view == null) {
-            view = lInflater.inflate(R.layout.schedule_widget_configure_item, viewGroup, false);
+            view = lInflater.inflate(R.layout.list_fragment_item, viewGroup, false);
         }
 
         Teacher g = (Teacher) getItem(i);
