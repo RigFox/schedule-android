@@ -25,7 +25,7 @@ import xyz.rigfox.schedule_android.models.ScheduleDao;
 import xyz.rigfox.schedule_android.models.Subject;
 import xyz.rigfox.schedule_android.models.SubjectDao;
 
-public class ScheduleFactory implements RemoteViewsService.RemoteViewsFactory {
+class ScheduleFactory implements RemoteViewsService.RemoteViewsFactory {
     private Context context;
     private int appwidget_id;
     private int group_id;
@@ -33,36 +33,19 @@ public class ScheduleFactory implements RemoteViewsService.RemoteViewsFactory {
 
     private ScheduleDao scheduleDao;
     private ArrayList<Schedule> schedules = new ArrayList<>();
-    private final Intent conIntent;
-    private final ServiceConnection sConn;
 
     ScheduleFactory(Context ctx, Intent intent) {
         context = ctx;
         appwidget_id = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID);
-
-        conIntent = new Intent(context, ScheduleService.class);
-        sConn = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-                ScheduleService scheduleService = ((ScheduleService.ScheduleBinder) iBinder).getService();
-                scheduleDao = scheduleService.getScheduleDao();
-
-                onDataSetChanged();
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName componentName) {
-            }
-        };
-
-        context.bindService(conIntent, sConn, Context.BIND_AUTO_CREATE);
     }
 
     @Override
     public void onCreate() {
         group_id = ScheduleWidgetConfigureActivity.loadGroupPref(context, appwidget_id);
         teacher_id = ScheduleWidgetConfigureActivity.loadTeacherPref(context, appwidget_id);
+
+        scheduleDao = ScheduleSingleton.getInstance().getScheduleDao();
     }
 
     @Override
@@ -154,11 +137,6 @@ public class ScheduleFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public void onDataSetChanged() {
-        if (scheduleDao == null) {
-            context.bindService(conIntent, sConn, Context.BIND_AUTO_CREATE);
-            return;
-        }
-
         SharedPreferences sp = context.getSharedPreferences(ScheduleWidgetConfigureActivity.PREFS_NAME + appwidget_id, 0);
         Long timestamp = sp.getLong(ScheduleWidgetConfigureActivity.PREF_PREFIX_DAY, System.currentTimeMillis());
 

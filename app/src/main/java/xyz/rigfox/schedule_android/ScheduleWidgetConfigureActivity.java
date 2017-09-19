@@ -31,10 +31,8 @@ public class ScheduleWidgetConfigureActivity extends Activity {
     ListView.OnItemClickListener GroupListClickListener = new ListView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            final Context context = ScheduleWidgetConfigureActivity.this;
-
             // i + 1 (id in DB since 1)
-            saveGroupPref(context, mAppWidgetId, i + 1);
+            saveGroupPref(ScheduleWidgetConfigureActivity.this, mAppWidgetId, i + 1);
 
             Intent resultValue = new Intent();
             resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
@@ -46,10 +44,8 @@ public class ScheduleWidgetConfigureActivity extends Activity {
     ListView.OnItemClickListener TeacherListClickListener = new ListView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            final Context context = ScheduleWidgetConfigureActivity.this;
-
             // i + 1 (id in DB since 1)
-            saveTeacherPref(context, mAppWidgetId, i + 1);
+            saveTeacherPref(ScheduleWidgetConfigureActivity.this, mAppWidgetId, i + 1);
 
             Intent resultValue = new Intent();
             resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
@@ -58,8 +54,7 @@ public class ScheduleWidgetConfigureActivity extends Activity {
         }
     };
 
-    ServiceConnection sConn;
-    ScheduleService scheduleService;
+    private ScheduleSingleton scheduleSingleton;
 
     public ScheduleWidgetConfigureActivity() {
         super();
@@ -95,33 +90,19 @@ public class ScheduleWidgetConfigureActivity extends Activity {
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-
         setResult(RESULT_CANCELED);
 
+        scheduleSingleton = ScheduleSingleton.getInstance();
+
+        if (!scheduleSingleton.checkDB()) {
+            Toast.makeText(this, "Расписание не загружено! Сейчас мы попробуем загрузить его.", Toast.LENGTH_LONG).show();
+            scheduleSingleton.checkOrDownload();
+        }
+
         setContentView(R.layout.schedule_widget_configure);
+        connectList();
         ((ListView) findViewById(R.id.group_list)).setOnItemClickListener(GroupListClickListener);
         ((ListView) findViewById(R.id.teacher_list)).setOnItemClickListener(TeacherListClickListener);
-
-        final Intent conIntent = new Intent(this, ScheduleService.class);
-        sConn = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-                scheduleService = ((ScheduleService.ScheduleBinder) iBinder).getService();
-
-                if (!scheduleService.checkDB()) {
-                    Toast.makeText(scheduleService, "Расписание не загружено! Запустите приложение, чтобы загрузить расписание.", Toast.LENGTH_LONG).show();
-                    finish();
-                }
-
-                connectList();
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName componentName) {
-            }
-        };
-
-        bindService(conIntent, sConn, 0);
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
@@ -135,21 +116,15 @@ public class ScheduleWidgetConfigureActivity extends Activity {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unbindService(sConn);
-    }
-
     void connectList() {
-        List<Group> groups = scheduleService.getGroups();
+        List<Group> groups = scheduleSingleton.getGroups();
         GroupAdapter groupAdapter = new GroupAdapter(this, groups);
 
         ListView lvGroup = findViewById(R.id.group_list);
         lvGroup.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         lvGroup.setAdapter(groupAdapter);
 
-        List<Teacher> teachers = scheduleService.getTeachers();
+        List<Teacher> teachers = scheduleSingleton.getTeachers();
         TeacherAdapter teacherAdapter = new TeacherAdapter(this, teachers);
 
         ListView lvTeacher = findViewById(R.id.teacher_list);

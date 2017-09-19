@@ -26,10 +26,8 @@ public class AboutFragment extends Fragment {
         (view.findViewById(R.id.resetbutton)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent serviceIntent = new Intent(ctx, ScheduleService.class);
-                serviceIntent.setAction(ScheduleService.RESET);
-
-                ctx.startService(serviceIntent);
+                MainActivity activity = (MainActivity) getActivity();
+                activity.scheduleSingleton.resetDB();
             }
         });
 
@@ -40,8 +38,7 @@ public class AboutFragment extends Fragment {
 
     void updateFields(View view) {
         MainActivity activity = (MainActivity) getActivity();
-
-        Setting setting = activity.scheduleService.getSetting();
+        Setting setting = activity.scheduleSingleton.getSetting();
 
         int version_int = 0;
         int revision_int = 0;

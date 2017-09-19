@@ -1,11 +1,8 @@
 package xyz.rigfox.schedule_android;
 
-import android.app.Service;
-import android.content.Intent;
+import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
-import android.os.Binder;
-import android.os.IBinder;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -30,63 +27,66 @@ import xyz.rigfox.schedule_android.models.SettingDao;
 import xyz.rigfox.schedule_android.models.Subject;
 import xyz.rigfox.schedule_android.models.Teacher;
 
-public class ScheduleService extends Service {
-    public static final String CHECK_OR_DOWNLOAD = "CHECK_OR_DOWNLOAD";
-    public static final String CHECK_UPDATE = "CHECK_UPDATE";
-    public static final String RESET = "RESET";
+class ScheduleSingleton {
+    private static ScheduleSingleton mInstance;
 
-    private DaoSession daoSession;
+    private final DaoSession daoSession;
+    private final Context ctx;
 
-    private ScheduleBinder binder;
-
-    OkHttpClient client = new OkHttpClient();
-
-    String run(String url) throws IOException {
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
-
-        Response response = client.newCall(request).execute();
-        return response.body().string();
+    static void initInstance(Context context) {
+        if (mInstance == null) {
+            mInstance = new ScheduleSingleton(context);
+        }
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
+    static ScheduleSingleton getInstance() {
+        return mInstance;
+    }
 
-        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "schedule-db", null);
+    private ScheduleSingleton(Context context) {
+        ctx = context;
+
+        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(context, "schedules-db", null);
         SQLiteDatabase db = helper.getWritableDatabase();
         DaoMaster daoMaster = new DaoMaster(db);
         daoSession = daoMaster.newSession();
 
 //        DaoMaster.dropAllTables(daoSession.getDatabase(), true);
 //        DaoMaster.createAllTables(daoSession.getDatabase(), true);
-
-        binder = new ScheduleBinder();
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        String action = intent.getAction();
+    boolean checkDB() {
+        return daoSession.getSettingDao().queryBuilder().where(SettingDao.Properties.Id.eq(1)).count() != 0;
+    }
 
-        switch (action) {
-            case CHECK_OR_DOWNLOAD:
-                checkOrDownload();
-                break;
-            case CHECK_UPDATE:
-
-                break;
-            case RESET:
-                DaoMaster.dropAllTables(daoSession.getDatabase(), true);
-                DaoMaster.createAllTables(daoSession.getDatabase(), true);
-
-                checkOrDownload();
-                break;
-            default:
-                throw new UnsupportedOperationException("Action unsupported");
+    void checkOrDownload() {
+        if (!checkDB()) {
+            DownloadTask downloadTask = new DownloadTask();
+            downloadTask.execute();
         }
+    }
 
-        return Service.START_STICKY;
+    void resetDB() {
+        DaoMaster.dropAllTables(daoSession.getDatabase(), true);
+        DaoMaster.createAllTables(daoSession.getDatabase(), true);
+
+        checkOrDownload();
+    }
+
+    Setting getSetting() {
+        return daoSession.getSettingDao().queryBuilder().where(SettingDao.Properties.Id.eq(1)).unique();
+    }
+
+    List<Group> getGroups() {
+        return daoSession.getGroupDao().loadAll();
+    }
+
+    List<Teacher> getTeachers() {
+        return daoSession.getTeacherDao().loadAll();
+    }
+
+    ScheduleDao getScheduleDao() {
+        return daoSession.getScheduleDao();
     }
 
     private class DownloadTask extends AsyncTask<Void, Void, JSONObject> {
@@ -111,7 +111,7 @@ public class ScheduleService extends Service {
             super.onPostExecute(jsonObject);
 
             if (jsonObject == null) {
-                Toast.makeText(ScheduleService.this, "Не удалось загрузить расписание!", Toast.LENGTH_LONG).show();
+                Toast.makeText(ctx, "Не удалось загрузить расписание!", Toast.LENGTH_LONG).show();
                 return;
             }
 
@@ -154,53 +154,21 @@ public class ScheduleService extends Service {
                 }
                 daoSession.getScheduleDao().insertInTx(schedules);
 
-                Toast.makeText(ScheduleService.this, "Расписание успешно загружено!", Toast.LENGTH_LONG).show();
+                Toast.makeText(ctx, "Расписание успешно загружено!", Toast.LENGTH_LONG).show();
             } catch (JSONException e) {
-                Toast.makeText(ScheduleService.this, "Ошибка загрузки! Возможно неконсистентное состояние!", Toast.LENGTH_LONG).show();
+                Toast.makeText(ctx, "Ошибка загрузки! Возможно неконсистентное состояние!", Toast.LENGTH_LONG).show();
             }
         }
     }
 
-    void checkOrDownload() {
-        if (!checkDB()) {
-            DownloadTask downloadTask = new DownloadTask();
-            downloadTask.execute();
-        }
-    }
+    private OkHttpClient client = new OkHttpClient();
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
+    private String run(String url) throws IOException {
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return binder;
-    }
-
-    class ScheduleBinder extends Binder {
-        ScheduleService getService() {
-            return ScheduleService.this;
-        }
-    }
-
-    boolean checkDB() {
-        return daoSession.getSettingDao().queryBuilder().where(SettingDao.Properties.Id.eq(1)).count() != 0;
-    }
-
-    Setting getSetting() {
-        return daoSession.getSettingDao().queryBuilder().where(SettingDao.Properties.Id.eq(1)).unique();
-    }
-
-    List<Group> getGroups() {
-        return daoSession.getGroupDao().loadAll();
-    }
-
-    List<Teacher> getTeachers() {
-        return daoSession.getTeacherDao().loadAll();
-    }
-
-    ScheduleDao getScheduleDao() {
-        return daoSession.getScheduleDao();
+        Response response = client.newCall(request).execute();
+        return response.body().string();
     }
 }

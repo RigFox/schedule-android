@@ -1,10 +1,7 @@
 package xyz.rigfox.schedule_android;
 
-import android.content.ComponentName;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -18,8 +15,7 @@ import android.view.MenuItem;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    ServiceConnection sConn;
-    public ScheduleService scheduleService;
+    ScheduleSingleton scheduleSingleton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,38 +33,11 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        final Intent intent = new Intent(this, ScheduleService.class);
-        sConn = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-                scheduleService = ((ScheduleService.ScheduleBinder) iBinder).getService();
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName componentName) {
-            }
-        };
-
-        bindService(intent, sConn, 0);
-
         setFragment(MainFragment.class);
 
-        checkOrDownloadSchedule();
+        scheduleSingleton = ScheduleSingleton.getInstance();
+        scheduleSingleton.checkOrDownload();
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unbindService(sConn);
-    }
-
-    void checkOrDownloadSchedule() {
-        Intent serviceIntent = new Intent(getApplicationContext(), ScheduleService.class);
-        serviceIntent.setAction(ScheduleService.CHECK_OR_DOWNLOAD);
-
-        startService(serviceIntent);
-    }
-
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -94,8 +63,7 @@ public class MainActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        Fragment fragment = null;
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         Class fragmentClass = null;
 
         int id = item.getItemId();
