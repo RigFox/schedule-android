@@ -94,11 +94,20 @@ class ScheduleFactory implements RemoteViewsService.RemoteViewsFactory {
                 teacher = currentItem.getGroup().getName();
             } else {
                 teacher = subjectItm.getTeacher().getName();
+
+                if (teacher.equals("????")) {
+                    teacher = "";
+                }
             }
 
             String classroom = subjectItm.getClassroom();
 
             String week = "(" + startWeek + "-" + endWeek + ")\n";
+
+            if (startWeek == endWeek) {
+                week = "(" + startWeek + ")\n";
+            }
+
             week += classroom;
 
             String timeText = "";
