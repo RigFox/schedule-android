@@ -75,8 +75,10 @@ class ScheduleSingleton {
     }
 
     void checkAndDownloadUpdate() {
-        UpdateTask updateTask = new UpdateTask();
-        updateTask.execute();
+        if (checkDB()) {
+            UpdateTask updateTask = new UpdateTask();
+            updateTask.execute();
+        }
     }
 
     Setting getSetting() {
