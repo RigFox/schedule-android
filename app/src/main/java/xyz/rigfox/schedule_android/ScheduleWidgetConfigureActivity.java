@@ -12,12 +12,19 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import xyz.rigfox.schedule_android.models.Group;
+import xyz.rigfox.schedule_android.models.Teacher;
 
 public class ScheduleWidgetConfigureActivity extends AppCompatActivity {
 
@@ -78,8 +85,9 @@ public class ScheduleWidgetConfigureActivity extends AppCompatActivity {
     public ListView.OnItemClickListener GroupListClickListener = new ListView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            // i + 1 (id in DB since 1)
-            saveGroupPref(ScheduleWidgetConfigureActivity.this, mAppWidgetId, i + 1);
+            Group group = (Group) adapterView.getAdapter().getItem(i);
+
+            saveGroupPref(ScheduleWidgetConfigureActivity.this, mAppWidgetId, Integer.valueOf(Long.toString(group.getId())));
 
             Intent resultValue = new Intent();
             resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
@@ -91,8 +99,9 @@ public class ScheduleWidgetConfigureActivity extends AppCompatActivity {
     public ListView.OnItemClickListener TeacherListClickListener = new ListView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            // i + 1 (id in DB since 1)
-            saveTeacherPref(ScheduleWidgetConfigureActivity.this, mAppWidgetId, i + 1);
+            Teacher teacher = (Teacher) adapterView.getAdapter().getItem(i);
+
+            saveTeacherPref(ScheduleWidgetConfigureActivity.this, mAppWidgetId, Integer.valueOf(Long.toString(teacher.getId())));
 
             Intent resultValue = new Intent();
             resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
@@ -135,6 +144,8 @@ public class ScheduleWidgetConfigureActivity extends AppCompatActivity {
         }
     }
 
+    static GroupAdapter groupAdapter;
+
     public static class GroupListFragment extends Fragment {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -142,13 +153,36 @@ public class ScheduleWidgetConfigureActivity extends AppCompatActivity {
             View rootView = inflater.inflate(R.layout.list_fragment, container, false);
 
             ListView listView = rootView.findViewById(R.id.list);
+            EditText searchBox = rootView.findViewById(R.id.list_searchbox);
+
+
             listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-            listView.setAdapter(new GroupAdapter(getContext(), ScheduleSingleton.getInstance().getGroups()));
+
+            groupAdapter = new GroupAdapter(getContext(), ScheduleSingleton.getInstance().getGroups());
+
+            listView.setAdapter(groupAdapter);
             listView.setOnItemClickListener(((ScheduleWidgetConfigureActivity) getActivity()).GroupListClickListener);
+
+            searchBox.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    groupAdapter.getFilter().filter(s.toString());
+                }
+            });
 
             return rootView;
         }
     }
+
+    static TeacherAdapter teacherAdapter;
 
     public static class TeacherListFragment extends Fragment {
         @Override
@@ -157,9 +191,29 @@ public class ScheduleWidgetConfigureActivity extends AppCompatActivity {
             View rootView = inflater.inflate(R.layout.list_fragment, container, false);
 
             ListView listView = rootView.findViewById(R.id.list);
+            EditText searchBox = rootView.findViewById(R.id.list_searchbox);
+
             listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-            listView.setAdapter(new TeacherAdapter(getContext(), ScheduleSingleton.getInstance().getTeachers()));
+
+            teacherAdapter = new TeacherAdapter(getContext(), ScheduleSingleton.getInstance().getTeachers());
+
+            listView.setAdapter(teacherAdapter);
             listView.setOnItemClickListener(((ScheduleWidgetConfigureActivity) getActivity()).TeacherListClickListener);
+
+            searchBox.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    teacherAdapter.getFilter().filter(s.toString());
+                }
+            });
 
             return rootView;
         }

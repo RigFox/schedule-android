@@ -3,14 +3,22 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <EditText
+        android:id="@+id/list_searchbox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Поиск"
+        android:inputType="text"
+        android:focusedByDefault="false"/>
+
     <ListView
         android:id="@+id/list"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:background="#ffffff"
         android:divider="@drawable/separator"
         android:dividerHeight="1dp"
-        android:footerDividersEnabled="false"
-        android:layout_weight="1" />
+        android:footerDividersEnabled="false" />
 
 </LinearLayout>
