@@ -102,6 +102,10 @@ class ScheduleFactory implements RemoteViewsService.RemoteViewsFactory {
 
             String classroom = subjectItm.getClassroom();
 
+            if (classroom.equals("null")) {
+                classroom = "";
+            }
+
             String week = "(" + startWeek + "-" + endWeek + ")\n";
 
             if (startWeek == endWeek) {
