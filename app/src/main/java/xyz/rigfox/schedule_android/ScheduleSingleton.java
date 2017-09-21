@@ -1,6 +1,7 @@
 package xyz.rigfox.schedule_android;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.widget.Toast;
@@ -134,7 +135,12 @@ class ScheduleSingleton {
                     return;
                 }
 
-                daoSession.getSettingDao().insert(new Setting(jsonSetting));
+                try {
+                    daoSession.getSettingDao().insert(new Setting(jsonSetting));
+                } catch (SQLiteConstraintException e) {
+                    Toast.makeText(ctx, "Ошибка при установке расписания. Попробуйте позже!", Toast.LENGTH_LONG).show();
+                    return;
+                }
 
                 JSONArray jsonTeachers = jsonObject.getJSONArray("teachers");
                 ArrayList<Teacher> teachers = new ArrayList<>();
