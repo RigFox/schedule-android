@@ -131,6 +131,9 @@ class ScheduleFactory implements RemoteViewsService.RemoteViewsFactory {
                 case 5:
                     timeText = "15:15-\n16:50";
                     break;
+                case 6:
+                    timeText = "17:00-\n18:35";
+                    break;
             }
 
             rView.setTextViewText(R.id.subject, subject);
