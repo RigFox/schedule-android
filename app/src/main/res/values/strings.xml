@@ -4,10 +4,6 @@
     <string name="navigation_drawer_open">Открыть меню</string>
     <string name="navigation_drawer_close">Закрыть меню</string>
 
-    <string name="action_settings">Settings</string>
-
-    <string name="main_blank">Тут пока ничего нет! Для просмотра расписания расположите на рабочем столе виджет.</string>
-    <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Добавить виджет</string>
     <string name="configure">Настроить</string>
     <string name="updated_at_title">Дата обновления расписания</string>
@@ -19,9 +15,10 @@
     <string name="tutor_disclaimer">На разных устройствах это может делаться немного иначе. Различия только в названиях и деталях дизайна.</string>
     <string name="tutor1">• Для начала нужно перейти на стартовый экран (свернуть все приложения).</string>
     <string name="tutor2">• Долгим нажатием на пустое место на экране вызывается настройщик (внешне он может немного отличаться).</string>
-    <string name="tutor3">• Теперь нужно перейти перейти в выбору виджетов.</string>
+    <string name="tutor3">• Теперь нужно перейти в выбору виджетов.</string>
     <string name="tutor4">• Среди списка виджетов находим Мой СиБГУи нажимая и удерживая палец на нём мы размещаем его.</string>
     <string name="tutor5">• В появившемся настройщике виджета выбираем группу или преподавателя расписание которого мы будем видеть в виджете.</string>
     <string name="tutor6">Разместив виджет, вы можете долгим нажатием на него перейти к изменению его размера и подстроить его.</string>
     <string name="tutor7">Таким же образом можно добавить ещё несколько виджетов и следить за несколькими группами или преподавателями одновременно.</string>
+    <string name="description_title">Описание обновления</string>
 </resources>

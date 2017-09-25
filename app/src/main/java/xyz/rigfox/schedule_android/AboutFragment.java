@@ -42,11 +42,13 @@ public class AboutFragment extends Fragment {
         int version_int = 0;
         int revision_int = 0;
         String updated_at_text = "Расписание не загружено";
+        String description_text = "";
 
         if (setting != null) {
             version_int = setting.getVersion();
             revision_int = setting.getRevision();
             updated_at_text = setting.getUpdated_at();
+            description_text = setting.getDescription();
         }
 
         String version_text;
@@ -61,10 +63,12 @@ public class AboutFragment extends Fragment {
         EditText version = view.findViewById(R.id.version);
         EditText revision = view.findViewById(R.id.revision);
         EditText updated_at = view.findViewById(R.id.updated_at);
+        EditText description = view.findViewById(R.id.description);
 
         app_version.setText(version_text);
         version.setText(String.valueOf(version_int));
         revision.setText(String.valueOf(revision_int));
         updated_at.setText(updated_at_text);
+        description.setText(description_text);
     }
 }
