@@ -15,8 +15,6 @@ import android.view.MenuItem;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    ScheduleSingleton scheduleSingleton;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,9 +32,6 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         setFragment(MainFragment.class);
-
-        scheduleSingleton = ScheduleSingleton.getInstance();
-        scheduleSingleton.checkOrDownload();
     }
     @Override
     public void onBackPressed() {

@@ -6,7 +6,10 @@ public class ScheduleApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
         ScheduleSingleton.initInstance(this);
+        ScheduleSingleton.getInstance().checkOrDownload();
+
         UpdateReceiver updateReceiver = new UpdateReceiver();
         updateReceiver.setUpdateAlarm(this);
     }
