@@ -1,24 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <EditText
         android:id="@+id/list_searchbox"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="45dp"
         android:ems="10"
+        android:focusedByDefault="false"
         android:hint="Поиск"
-        android:inputType="text"
-        android:focusedByDefault="false"/>
+        android:inputType="text" />
 
     <ListView
         android:id="@+id/list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="#ffffff"
         android:divider="@drawable/separator"
         android:dividerHeight="1dp"
-        android:footerDividersEnabled="false" />
+        android:footerDividersEnabled="false"
+        android:paddingBottom="50dp" />
 
 </LinearLayout>
