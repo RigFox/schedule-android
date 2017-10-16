@@ -30,7 +30,7 @@ import xyz.rigfox.schedule_android.models.Teacher;
 import xyz.rigfox.schedule_android.models.TeacherDao;
 
 class ScheduleSingleton {
-    public static final String HTTP_SCHEDULE_JSON = "http://dev.schedule.sibsu.tk/";
+    public static final String HTTP_SCHEDULE_JSON = "http://rasp.sibsu.tk/";
 
     private static ScheduleSingleton mInstance;
 
