@@ -73,7 +73,6 @@ class ScheduleFactory implements RemoteViewsService.RemoteViewsFactory {
             currentItem.setSubject_id(-1L);
         }
 
-
         if (currentItem.getSubject_id() == -1) {
             rView.setTextViewText(R.id.subject, "");
             rView.setTextViewText(R.id.teacher, "");
@@ -83,71 +82,104 @@ class ScheduleFactory implements RemoteViewsService.RemoteViewsFactory {
                 rView.setTextViewText(R.id.subject, "Ура! Первой пары нет");
             }
         } else {
-            Subject subjectItm = currentItem.getSubject();
+            if (currentItem.getSubject_id_2() == null || teacher_id != -1) {
+                Subject subjectItem = currentItem.getSubject();
 
-            String startWeek = String.valueOf(currentItem.getStartWeek());
-            String endWeek = String.valueOf(currentItem.getEndWeek());
-            String subject = subjectItm.getName();
-
-            String teacher;
-            if (teacher_id != -1) {
-                teacher = currentItem.getGroup().getName();
-            } else {
-                teacher = subjectItm.getTeacher().getName();
-
-                if (teacher.equals("????")) {
-                    teacher = "";
+                if (currentItem.getSubject_id_2() != null && currentItem.getSubject_2().getTeacher_id() == teacher_id) {
+                    subjectItem = currentItem.getSubject_2();
                 }
+
+                rView.setTextViewText(R.id.timeText, generateTimeText(currentItem));
+
+                rView.setTextViewText(R.id.subject, generateSubjectText(subjectItem));
+                rView.setTextViewText(R.id.teacher, generateTeacherText(subjectItem));
+                rView.setTextViewText(R.id.week, generateWeekText(subjectItem, currentItem.getStartWeek(), currentItem.getEndWeek()));
+
+            } else {
+                rView = new RemoteViews(context.getPackageName(),
+                        R.layout.schedule_item_subgrouped);
+
+                Subject subjectItem = currentItem.getSubject();
+                Subject subjectItem_2 = currentItem.getSubject_2();
+
+                rView.setTextViewText(R.id.timeText, generateTimeText(currentItem));
+
+                rView.setTextViewText(R.id.subject, generateSubjectText(subjectItem));
+                rView.setTextViewText(R.id.teacher, generateTeacherText(subjectItem));
+                rView.setTextViewText(R.id.week, generateWeekText(subjectItem, currentItem.getStartWeek(), currentItem.getEndWeek()));
+
+                rView.setTextViewText(R.id.subject_2, generateSubjectText(subjectItem_2));
+                rView.setTextViewText(R.id.teacher_2, generateTeacherText(subjectItem_2));
+                rView.setTextViewText(R.id.week_2, generateWeekText(subjectItem_2, currentItem.getStartWeek_2(), currentItem.getEndWeek_2()));
             }
-
-            String classroom = subjectItm.getClassroom();
-
-            if (classroom.equals("null")) {
-                classroom = "";
-            }
-
-            String week = "(" + startWeek + "-" + endWeek + ")\n";
-
-            if (startWeek == endWeek) {
-                week = "(" + startWeek + ")\n";
-            }
-
-            week += classroom;
-
-            String timeText = "";
-            switch (currentItem.getNum()) {
-                case 1:
-                    timeText = "8:00-\n9:35";
-                    break;
-                case 2:
-                    timeText = "9:45-\n11:20";
-                    break;
-                case 3:
-                    timeText = "11:30-\n13:05";
-                    break;
-                case 4:
-                    timeText = "13:30-\n15:05";
-                    break;
-                case 5:
-                    timeText = "15:15-\n16:50";
-                    break;
-                case 6:
-                    timeText = "17:00-\n18:35";
-                    break;
-            }
-
-            rView.setTextViewText(R.id.subject, subject);
-            rView.setTextViewText(R.id.teacher, teacher);
-            rView.setTextViewText(R.id.week, week);
-            rView.setTextViewText(R.id.timeText, timeText);
         }
 
         return rView;
     }
 
+    private String generateSubjectText(Subject subject) {
+        return subject.getName();
+    }
+
+    private String generateTeacherText(Subject subject) {
+        String teacher;
+        if (teacher_id != -1) {
+            teacher = subject.getGroup().getName();
+        } else {
+            teacher = subject.getTeacher().getName();
+
+            if (teacher.equals("????")) {
+                teacher = "";
+            }
+        }
+
+        return teacher;
+    }
+
+    private String generateWeekText(Subject subject, int startWeek, int endWeek) {
+        String startWeekText = String.valueOf(startWeek);
+        String endWeekText = String.valueOf(endWeek);
+
+        String week = "(" + startWeekText + "-" + endWeekText + ")\n";
+
+        if (startWeekText == endWeekText) {
+            week = "(" + startWeekText + ")\n";
+        }
+
+        week += subject.getClassroom();
+
+        return week;
+    }
+
+    private String generateTimeText(Schedule schedule) {
+        String timeText = "";
+        switch (schedule.getNum()) {
+            case 1:
+                timeText = "8:00-\n9:35";
+                break;
+            case 2:
+                timeText = "9:45-\n11:20";
+                break;
+            case 3:
+                timeText = "11:30-\n13:05";
+                break;
+            case 4:
+                timeText = "13:30-\n15:05";
+                break;
+            case 5:
+                timeText = "15:15-\n16:50";
+                break;
+            case 6:
+                timeText = "17:00-\n18:35";
+                break;
+        }
+
+        return timeText;
+    }
+
     @Override
     public int getViewTypeCount() {
-        return 1;
+        return 2;
     }
 
     @Override
@@ -174,14 +206,16 @@ class ScheduleFactory implements RemoteViewsService.RemoteViewsFactory {
 
         int numWeek = currentWeek - 35;
 
-        QueryBuilder<Schedule> qb;
+        QueryBuilder<Schedule> qb = scheduleDao.queryBuilder();
+        QueryBuilder<Schedule> qb_2 = scheduleDao.queryBuilder();
 
         if (teacher_id != -1) {
-            qb = scheduleDao.queryBuilder();
             qb.join(ScheduleDao.Properties.Subject_id, Subject.class)
                     .where(SubjectDao.Properties.Teacher_id.eq(teacher_id));
+
+            qb_2.join(ScheduleDao.Properties.Subject_id_2, Subject.class)
+                    .where(SubjectDao.Properties.Teacher_id.eq(teacher_id));
         } else {
-            qb = scheduleDao.queryBuilder();
             qb.where(
                     qb.and(ScheduleDao.Properties.Group_id.eq(group_id),
                             ScheduleDao.Properties.Day.eq(dayOfWeek),
@@ -193,6 +227,8 @@ class ScheduleFactory implements RemoteViewsService.RemoteViewsFactory {
         ArrayList<Schedule> prepSchedules = (ArrayList<Schedule>) qb.list();
 
         if (teacher_id != -1) {
+            prepSchedules.addAll(qb_2.list());
+
             ArrayList<Schedule> temp = new ArrayList<>();
 
             for (Schedule schedule : prepSchedules) {

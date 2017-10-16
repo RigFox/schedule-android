@@ -18,10 +18,18 @@ public class Schedule {
     private Integer num;
     private Integer startWeek;
     private Integer endWeek;
+
+    private Long subject_id_2;
+    private Integer startWeek_2;
+    private Integer endWeek_2;
+
     private Long group_id;
 
     @ToOne(joinProperty = "subject_id")
     private Subject subject;
+
+    @ToOne(joinProperty = "subject_id_2")
+    private Subject subject_2;
 
     @ToOne(joinProperty = "group_id")
     private Group group;
@@ -40,6 +48,9 @@ public class Schedule {
     @Generated(hash = 201187923)
     private transient Long group__resolvedKey;
 
+    @Generated(hash = 896007349)
+    private transient Long subject_2__resolvedKey;
+
     public Schedule(JSONObject jsonSchedule) {
         try {
             this.id = jsonSchedule.getLong("id");
@@ -48,21 +59,44 @@ public class Schedule {
             this.num = jsonSchedule.getInt("num");
             this.startWeek = jsonSchedule.getInt("startWeek");
             this.endWeek = jsonSchedule.getInt("endWeek");
+
             this.group_id = jsonSchedule.getLong("group_id");
+
+            try {
+                this.subject_id_2 = jsonSchedule.getLong("subject_id_2");
+            } catch (JSONException e) {
+                this.subject_id_2 = null;
+            }
+
+            try {
+                this.startWeek_2 = jsonSchedule.getInt("startWeek_2");
+            } catch (JSONException e) {
+                this.startWeek_2 = null;
+            }
+
+            try {
+                this.endWeek_2 = jsonSchedule.getInt("endWeek_2");
+            } catch (JSONException e) {
+                this.endWeek_2 = null;
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    @Generated(hash = 2077098158)
-    public Schedule(Long id, Long subject_id, Integer day, Integer num,
-            Integer startWeek, Integer endWeek, Long group_id) {
+    @Generated(hash = 1145598737)
+    public Schedule(Long id, Long subject_id, Integer day, Integer num, Integer startWeek,
+            Integer endWeek, Long subject_id_2, Integer startWeek_2, Integer endWeek_2,
+            Long group_id) {
         this.id = id;
         this.subject_id = subject_id;
         this.day = day;
         this.num = num;
         this.startWeek = startWeek;
         this.endWeek = endWeek;
+        this.subject_id_2 = subject_id_2;
+        this.startWeek_2 = startWeek_2;
+        this.endWeek_2 = endWeek_2;
         this.group_id = group_id;
     }
 
@@ -218,6 +252,59 @@ public class Schedule {
             throw new DaoException("Entity is detached from DAO context");
         }
         myDao.update(this);
+    }
+
+    public Long getSubject_id_2() {
+        return this.subject_id_2;
+    }
+
+    public void setSubject_id_2(Long subject_id_2) {
+        this.subject_id_2 = subject_id_2;
+    }
+
+    public Integer getStartWeek_2() {
+        return this.startWeek_2;
+    }
+
+    public void setStartWeek_2(Integer startWeek_2) {
+        this.startWeek_2 = startWeek_2;
+    }
+
+    public Integer getEndWeek_2() {
+        return this.endWeek_2;
+    }
+
+    public void setEndWeek_2(Integer endWeek_2) {
+        this.endWeek_2 = endWeek_2;
+    }
+
+    /** To-one relationship, resolved on first access. */
+    @Generated(hash = 1764836738)
+    public Subject getSubject_2() {
+        Long __key = this.subject_id_2;
+        if (subject_2__resolvedKey == null || !subject_2__resolvedKey.equals(__key)) {
+            final DaoSession daoSession = this.daoSession;
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            SubjectDao targetDao = daoSession.getSubjectDao();
+            Subject subject_2New = targetDao.load(__key);
+            synchronized (this) {
+                subject_2 = subject_2New;
+                subject_2__resolvedKey = __key;
+            }
+        }
+        return subject_2;
+    }
+
+    /** called by internal mechanisms, do not call yourself. */
+    @Generated(hash = 26944271)
+    public void setSubject_2(Subject subject_2) {
+        synchronized (this) {
+            this.subject_2 = subject_2;
+            subject_id_2 = subject_2 == null ? null : subject_2.getId();
+            subject_2__resolvedKey = subject_id_2;
+        }
     }
 
     /** called by internal mechanisms, do not call yourself. */

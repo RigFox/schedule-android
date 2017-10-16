@@ -30,6 +30,8 @@ import xyz.rigfox.schedule_android.models.Teacher;
 import xyz.rigfox.schedule_android.models.TeacherDao;
 
 class ScheduleSingleton {
+    public static final String HTTP_SCHEDULE_JSON = "http://dev.schedule.sibsu.tk/";
+
     private static ScheduleSingleton mInstance;
 
     private final DaoSession daoSession;
@@ -104,7 +106,7 @@ class ScheduleSingleton {
         @Override
         protected JSONObject doInBackground(Void... voids) {
             try {
-                String JSON = run("http://rasp.sibsu.tk/schedule.json");
+                String JSON = run(HTTP_SCHEDULE_JSON + "schedule.json");
 
                 return new JSONObject(JSON);
             } catch (IOException | JSONException e) {
@@ -188,7 +190,7 @@ class ScheduleSingleton {
         @Override
         protected JSONObject doInBackground(Void... voids) {
             try {
-                String JSON = run("http://rasp.sibsu.tk/setting.json");
+                String JSON = run(HTTP_SCHEDULE_JSON + "setting.json");
 
                 return new JSONObject(JSON);
             } catch (IOException | JSONException e) {
