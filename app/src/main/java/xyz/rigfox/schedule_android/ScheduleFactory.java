@@ -199,12 +199,18 @@ class ScheduleFactory implements RemoteViewsService.RemoteViewsFactory {
         int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 2;
 
         int currentWeek = calendar.get(Calendar.WEEK_OF_YEAR);
+        int currentYear = calendar.get(Calendar.YEAR);
 
         if (currentWeek < 35) {
             currentWeek += 17 + 35;
         }
 
+        if (currentYear == 2018) {
+            currentWeek++;
+        }
+
         int numWeek = currentWeek - 35;
+
 
         QueryBuilder<Schedule> qb = scheduleDao.queryBuilder();
         QueryBuilder<Schedule> qb_2 = scheduleDao.queryBuilder();

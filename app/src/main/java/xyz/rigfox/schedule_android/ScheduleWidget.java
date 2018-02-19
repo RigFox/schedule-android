@@ -78,9 +78,14 @@ public class ScheduleWidget extends AppWidgetProvider {
         }
 
         int currentWeek = calendar.get(Calendar.WEEK_OF_YEAR);
+        int currentYear = calendar.get(Calendar.YEAR);
 
         if (currentWeek < 35) {
             currentWeek += 17 + 35;
+        }
+
+        if (currentYear == 2018) {
+            currentWeek++;
         }
 
         int weekOfYear = currentWeek - 35;
