@@ -29,8 +29,8 @@ import xyz.rigfox.schedule_android.models.Subject;
 import xyz.rigfox.schedule_android.models.Teacher;
 import xyz.rigfox.schedule_android.models.TeacherDao;
 
-class ScheduleSingleton {
-    public static final String HTTP_SCHEDULE_JSON = "http://rasp.sibsu.tk/";
+public class ScheduleSingleton {
+    private static final String HTTP_SCHEDULE_JSON = "http://rasp.sibsu.tk/";
 
     private static ScheduleSingleton mInstance;
 
@@ -43,7 +43,7 @@ class ScheduleSingleton {
         }
     }
 
-    static ScheduleSingleton getInstance() {
+    public static ScheduleSingleton getInstance() {
         return mInstance;
     }
 
@@ -59,32 +59,7 @@ class ScheduleSingleton {
 //        DaoMaster.createAllTables(daoSession.getDatabase(), true);
     }
 
-    boolean checkDB() {
-        return daoSession.getSettingDao().queryBuilder().where(SettingDao.Properties.Id.eq(1)).count() != 0;
-    }
-
-    void checkOrDownload() {
-        if (!checkDB()) {
-            DownloadTask downloadTask = new DownloadTask();
-            downloadTask.execute();
-        }
-    }
-
-    void resetDB() {
-        DaoMaster.dropAllTables(daoSession.getDatabase(), true);
-        DaoMaster.createAllTables(daoSession.getDatabase(), true);
-
-        checkOrDownload();
-    }
-
-    void checkAndDownloadUpdate() {
-        if (checkDB()) {
-            UpdateTask updateTask = new UpdateTask();
-            updateTask.execute();
-        }
-    }
-
-    Setting getSetting() {
+    public Setting getSetting() {
         return daoSession.getSettingDao().queryBuilder().where(SettingDao.Properties.Id.eq(1)).unique();
     }
 
@@ -100,6 +75,33 @@ class ScheduleSingleton {
 
     ScheduleDao getScheduleDao() {
         return daoSession.getScheduleDao();
+    }
+
+
+
+    boolean checkDB() {
+        return daoSession.getSettingDao().queryBuilder().where(SettingDao.Properties.Id.eq(1)).count() != 0;
+    }
+
+    void checkOrDownload() {
+        if (!checkDB()) {
+            DownloadTask downloadTask = new DownloadTask();
+            downloadTask.execute();
+        }
+    }
+
+    public void resetDB() {
+        DaoMaster.dropAllTables(daoSession.getDatabase(), true);
+        DaoMaster.createAllTables(daoSession.getDatabase(), true);
+
+        checkOrDownload();
+    }
+
+    void checkAndDownloadUpdate() {
+        if (checkDB()) {
+            UpdateTask updateTask = new UpdateTask();
+            updateTask.execute();
+        }
     }
 
     private class DownloadTask extends AsyncTask<Void, Void, JSONObject> {

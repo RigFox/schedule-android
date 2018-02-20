@@ -14,6 +14,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import xyz.rigfox.schedule_android.helpers.DateHelper;
+
 public class ScheduleWidget extends AppWidgetProvider {
 
     final static String ACTION_NEXT = "xyz.rigfox.schedule_androidNext";
@@ -48,49 +50,12 @@ public class ScheduleWidget extends AppWidgetProvider {
         SharedPreferences sp = context.getSharedPreferences(ScheduleWidgetConfigureActivity.PREFS_NAME + appWidgetId, 0);
         Long timestamp = sp.getLong(ScheduleWidgetConfigureActivity.PREF_PREFIX_DAY, System.currentTimeMillis());
 
-        Date date = new Date(timestamp);
-        GregorianCalendar calendar = new GregorianCalendar();
-        calendar.setTime(date);
-
-        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 2;
-
-        String dayOfWeekString = "";
-
-        switch (dayOfWeek) {
-            case 0:
-                dayOfWeekString = "Понедельник";
-                break;
-            case 1:
-                dayOfWeekString = "Вторник";
-                break;
-            case 2:
-                dayOfWeekString = "Среда";
-                break;
-            case 3:
-                dayOfWeekString = "Четверг";
-                break;
-            case 4:
-                dayOfWeekString = "Пятница";
-                break;
-            case 5:
-                dayOfWeekString = "Суббота";
-                break;
-        }
-
-        int currentWeek = calendar.get(Calendar.WEEK_OF_YEAR);
-        int currentYear = calendar.get(Calendar.YEAR);
-
-        if (currentWeek < 35) {
-            currentWeek += 17 + 35;
-        }
-
-        if (currentYear == 2018) {
-            currentWeek++;
-        }
-
-        int weekOfYear = currentWeek - 35;
+        String dayOfWeekString = DateHelper.getDayNameByTimestamp(timestamp);
+        int weekOfYear = DateHelper.getWeekOfYearByTimestamp(timestamp);
 
         String numWeek = String.valueOf(weekOfYear) + " неделя";
+
+        GregorianCalendar calendar = DateHelper.getCalendarByTimestamp(timestamp);
 
         rv.setTextViewText(R.id.date, calendar.get(Calendar.DAY_OF_MONTH) + "." + (calendar.get(Calendar.MONTH) + 1));
         rv.setTextViewText(R.id.dayOfWeek, dayOfWeekString);

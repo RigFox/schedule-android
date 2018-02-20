@@ -1,4 +1,4 @@
-package xyz.rigfox.schedule_android;
+package xyz.rigfox.schedule_android.fragments;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import xyz.rigfox.schedule_android.R;
+import xyz.rigfox.schedule_android.ScheduleSingleton;
 import xyz.rigfox.schedule_android.models.Setting;
 
 public class AboutFragment extends Fragment {

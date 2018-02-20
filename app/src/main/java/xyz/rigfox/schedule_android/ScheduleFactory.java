@@ -13,9 +13,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
-import java.util.GregorianCalendar;
 
+import xyz.rigfox.schedule_android.helpers.DateHelper;
 import xyz.rigfox.schedule_android.models.Schedule;
 import xyz.rigfox.schedule_android.models.ScheduleDao;
 import xyz.rigfox.schedule_android.models.Subject;
@@ -192,25 +191,9 @@ class ScheduleFactory implements RemoteViewsService.RemoteViewsFactory {
         SharedPreferences sp = context.getSharedPreferences(ScheduleWidgetConfigureActivity.PREFS_NAME + appwidget_id, 0);
         Long timestamp = sp.getLong(ScheduleWidgetConfigureActivity.PREF_PREFIX_DAY, System.currentTimeMillis());
 
-        Date date = new Date(timestamp);
-        GregorianCalendar calendar = new GregorianCalendar();
-        calendar.setTime(date);
+        int dayOfWeek = DateHelper.getCalendarByTimestamp(timestamp).get(Calendar.DAY_OF_WEEK) - 2;
 
-        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 2;
-
-        int currentWeek = calendar.get(Calendar.WEEK_OF_YEAR);
-        int currentYear = calendar.get(Calendar.YEAR);
-
-        if (currentWeek < 35) {
-            currentWeek += 17 + 35;
-        }
-
-        if (currentYear == 2018) {
-            currentWeek++;
-        }
-
-        int numWeek = currentWeek - 35;
-
+        int weekOfYear = DateHelper.getWeekOfYearByTimestamp(timestamp);
 
         QueryBuilder<Schedule> qb = scheduleDao.queryBuilder();
         QueryBuilder<Schedule> qb_2 = scheduleDao.queryBuilder();
@@ -225,8 +208,8 @@ class ScheduleFactory implements RemoteViewsService.RemoteViewsFactory {
             qb.where(
                     qb.and(ScheduleDao.Properties.Group_id.eq(group_id),
                             ScheduleDao.Properties.Day.eq(dayOfWeek),
-                            ScheduleDao.Properties.StartWeek.le(numWeek),
-                            ScheduleDao.Properties.EndWeek.ge(numWeek)))
+                            ScheduleDao.Properties.StartWeek.le(weekOfYear),
+                            ScheduleDao.Properties.EndWeek.ge(weekOfYear)))
                     .orderAsc(ScheduleDao.Properties.Num);
         }
 
@@ -238,7 +221,7 @@ class ScheduleFactory implements RemoteViewsService.RemoteViewsFactory {
             ArrayList<Schedule> temp = new ArrayList<>();
 
             for (Schedule schedule : prepSchedules) {
-                if (schedule.getDay() == dayOfWeek && schedule.getStartWeek() <= numWeek && schedule.getEndWeek() >= numWeek) {
+                if (schedule.getDay() == dayOfWeek && schedule.getStartWeek() <= weekOfYear && schedule.getEndWeek() >= weekOfYear) {
                     temp.add(schedule);
                 }
             }
