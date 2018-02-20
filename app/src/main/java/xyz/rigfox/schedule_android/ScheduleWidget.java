@@ -10,11 +10,17 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.widget.RemoteViews;
 
+import org.greenrobot.greendao.query.QueryBuilder;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
 import xyz.rigfox.schedule_android.helpers.DateHelper;
+import xyz.rigfox.schedule_android.models.Group;
+import xyz.rigfox.schedule_android.models.GroupDao;
+import xyz.rigfox.schedule_android.models.Teacher;
+import xyz.rigfox.schedule_android.models.TeacherDao;
 
 public class ScheduleWidget extends AppWidgetProvider {
 
@@ -57,9 +63,27 @@ public class ScheduleWidget extends AppWidgetProvider {
 
         GregorianCalendar calendar = DateHelper.getCalendarByTimestamp(timestamp);
 
+        int group_id = ScheduleWidgetConfigureActivity.loadGroupPref(context, appWidgetId);
+        int teacher_id = ScheduleWidgetConfigureActivity.loadTeacherPref(context, appWidgetId);
+
+        String groupName;
+
+        if (teacher_id != -1) {
+            QueryBuilder<Teacher> qb = ScheduleSingleton.getInstance().getTeacherDao().queryBuilder();
+
+            Teacher teacher = qb.where(TeacherDao.Properties.Id.eq(teacher_id)).unique();
+            groupName = teacher.getName();
+        } else {
+            QueryBuilder<Group> qb = ScheduleSingleton.getInstance().getGroupDao().queryBuilder();
+
+            Group group = qb.where(GroupDao.Properties.Id.eq(group_id)).unique();
+            groupName = group.getName();
+        }
+
         rv.setTextViewText(R.id.date, calendar.get(Calendar.DAY_OF_MONTH) + "." + (calendar.get(Calendar.MONTH) + 1));
         rv.setTextViewText(R.id.dayOfWeek, dayOfWeekString);
         rv.setTextViewText(R.id.numWeek, numWeek);
+        rv.setTextViewText(R.id.group, groupName);
 
         setPendingIntent(ACTION_NEXT, R.id.nextButton, context, appWidgetId, rv);
         setPendingIntent(ACTION_BACK, R.id.backButton, context, appWidgetId, rv);

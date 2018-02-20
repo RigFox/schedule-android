@@ -21,6 +21,7 @@ import xyz.rigfox.schedule_android.models.DaoMaster;
 import xyz.rigfox.schedule_android.models.DaoSession;
 import xyz.rigfox.schedule_android.models.Faculty;
 import xyz.rigfox.schedule_android.models.Group;
+import xyz.rigfox.schedule_android.models.GroupDao;
 import xyz.rigfox.schedule_android.models.Schedule;
 import xyz.rigfox.schedule_android.models.ScheduleDao;
 import xyz.rigfox.schedule_android.models.Setting;
@@ -77,7 +78,13 @@ public class ScheduleSingleton {
         return daoSession.getScheduleDao();
     }
 
+    GroupDao getGroupDao() {
+        return daoSession.getGroupDao();
+    }
 
+    TeacherDao getTeacherDao() {
+        return daoSession.getTeacherDao();
+    }
 
     boolean checkDB() {
         return daoSession.getSettingDao().queryBuilder().where(SettingDao.Properties.Id.eq(1)).count() != 0;
