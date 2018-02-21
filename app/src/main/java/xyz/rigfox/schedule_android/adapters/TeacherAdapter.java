@@ -1,11 +1,11 @@
-package xyz.rigfox.schedule_android;
+package xyz.rigfox.schedule_android.adapters;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
@@ -13,16 +13,17 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import xyz.rigfox.schedule_android.R;
 import xyz.rigfox.schedule_android.models.Teacher;
 
-class TeacherAdapter extends ArrayAdapter<Teacher> implements Filterable {
+public class TeacherAdapter extends ArrayAdapter<Teacher> implements Filterable {
     private LayoutInflater lInflater;
     private ModelFilter filter;
 
     private List<Teacher> objects;
     private List<Teacher> filteredObjects;
 
-    TeacherAdapter(Context context, List<Teacher> teachers) {
+    public TeacherAdapter(Context context, List<Teacher> teachers) {
         super(context, R.layout.list_fragment_item, teachers);
 
         objects = new ArrayList<>();
@@ -41,8 +42,9 @@ class TeacherAdapter extends ArrayAdapter<Teacher> implements Filterable {
         return filteredObjects.get(i);
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         View view;
         Teacher t = filteredObjects.get(position);
 
@@ -57,6 +59,7 @@ class TeacherAdapter extends ArrayAdapter<Teacher> implements Filterable {
         return view;
     }
 
+    @NonNull
     @Override
     public Filter getFilter() {
         if (filter == null) {

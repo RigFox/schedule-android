@@ -64,11 +64,11 @@ public class ScheduleSingleton {
         return daoSession.getSettingDao().queryBuilder().where(SettingDao.Properties.Id.eq(1)).unique();
     }
 
-    List<Group> getGroups() {
+    public List<Group> getGroups() {
         return daoSession.getGroupDao().loadAll();
     }
 
-    List<Teacher> getTeachers() {
+    public List<Teacher> getTeachers() {
         return daoSession.getTeacherDao().queryBuilder()
                 .where(TeacherDao.Properties.Name.notEq("????"))
                 .orderAsc(TeacherDao.Properties.Name).list();

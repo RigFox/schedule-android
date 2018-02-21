@@ -1,6 +1,7 @@
-package xyz.rigfox.schedule_android;
+package xyz.rigfox.schedule_android.adapters;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,16 +13,17 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import xyz.rigfox.schedule_android.R;
 import xyz.rigfox.schedule_android.models.Group;
 
-class GroupAdapter extends ArrayAdapter<Group> implements Filterable {
+public class GroupAdapter extends ArrayAdapter<Group> implements Filterable {
     private LayoutInflater lInflater;
     private ModelFilter filter;
 
     private List<Group> objects;
     private List<Group> filteredObjects;
 
-    GroupAdapter(Context context, List<Group> groups) {
+    public GroupAdapter(Context context, List<Group> groups) {
         super(context, R.layout.list_fragment_item, groups);
 
         objects = new ArrayList<>();
@@ -40,8 +42,9 @@ class GroupAdapter extends ArrayAdapter<Group> implements Filterable {
         return filteredObjects.get(i);
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         View view;
         Group g = filteredObjects.get(position);
 
@@ -56,6 +59,7 @@ class GroupAdapter extends ArrayAdapter<Group> implements Filterable {
         return view;
     }
 
+    @NonNull
     @Override
     public Filter getFilter() {
         if (filter == null) {
