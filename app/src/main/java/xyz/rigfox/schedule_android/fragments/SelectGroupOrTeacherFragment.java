@@ -27,6 +27,7 @@ public class SelectGroupOrTeacherFragment extends Fragment {
 
     private ListView.OnItemClickListener groupListClickListener;
     private ListView.OnItemClickListener teacherListClickListener;
+    private boolean showToolbar = true;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -35,6 +36,11 @@ public class SelectGroupOrTeacherFragment extends Fragment {
 
         Toolbar toolbar = view.findViewById(R.id.toolbar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+
+        if (!showToolbar) {
+            toolbar.setVisibility(View.GONE);
+        }
+
         SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getActivity().getSupportFragmentManager(), groupListClickListener, teacherListClickListener);
 
         ViewPager mViewPager = view.findViewById(R.id.list_container);
@@ -49,6 +55,10 @@ public class SelectGroupOrTeacherFragment extends Fragment {
     public void setClickListeners(ListView.OnItemClickListener groupListClickListener, ListView.OnItemClickListener teacherListClickListener) {
         this.groupListClickListener = groupListClickListener;
         this.teacherListClickListener = teacherListClickListener;
+    }
+
+    public void hideToolbar() {
+        showToolbar = false;
     }
 
     private class SectionsPagerAdapter extends FragmentPagerAdapter {

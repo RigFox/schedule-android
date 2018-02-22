@@ -14,6 +14,8 @@ import android.view.MenuItem;
 
 import xyz.rigfox.schedule_android.fragments.AboutFragment;
 import xyz.rigfox.schedule_android.fragments.MainFragment;
+import xyz.rigfox.schedule_android.fragments.ScheduleFragment;
+import xyz.rigfox.schedule_android.fragments.SelectGroupOrTeacherFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -34,7 +36,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        setFragment(MainFragment.class);
+        setFragment(new MainFragment());
     }
     @Override
     public void onBackPressed() {
@@ -46,32 +48,28 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    void setFragment(Class FragmentClass) {
-        Fragment fragment = null;
-
-        try {
-            fragment = (Fragment) FragmentClass.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+    void setFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        Class fragmentClass = null;
+        Fragment fragment = null;
 
-        int id = item.getItemId();
-
-        if (id == R.id.nav_main) {
-            fragmentClass = MainFragment.class;
-        } else if (id == R.id.nav_about) {
-            fragmentClass = AboutFragment.class;
+        switch (item.getItemId()) {
+            case R.id.nav_main:
+                fragment = new MainFragment();
+                break;
+            case R.id.nav_schedule:
+                fragment = new ScheduleFragment();
+                break;
+            case R.id.nav_about:
+                fragment = new AboutFragment();
+                break;
         }
 
-        setFragment(fragmentClass);
+        setFragment(fragment);
 
         item.setChecked(true);
 
