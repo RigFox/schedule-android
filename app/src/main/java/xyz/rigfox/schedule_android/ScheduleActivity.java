@@ -129,8 +129,8 @@ public class ScheduleActivity extends AppCompatActivity implements View.OnClickL
             return;
         }
 
-        int group_id = intent.getIntExtra(GROUP_ID, 1);
-        int teacher_id = intent.getIntExtra(TEACHER_ID, -1);
+        group_id = intent.getIntExtra(GROUP_ID, 1);
+        teacher_id = intent.getIntExtra(TEACHER_ID, -1);
 
         String groupName;
 
