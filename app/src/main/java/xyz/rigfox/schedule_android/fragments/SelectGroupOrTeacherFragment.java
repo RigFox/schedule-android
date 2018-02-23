@@ -41,7 +41,7 @@ public class SelectGroupOrTeacherFragment extends Fragment {
             toolbar.setVisibility(View.GONE);
         }
 
-        SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getActivity().getSupportFragmentManager(), groupListClickListener, teacherListClickListener);
+        SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager(), groupListClickListener, teacherListClickListener);
 
         ViewPager mViewPager = view.findViewById(R.id.list_container);
         mViewPager.setAdapter(mSectionsPagerAdapter);

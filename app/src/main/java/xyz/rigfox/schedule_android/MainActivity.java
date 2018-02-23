@@ -53,19 +53,23 @@ public class MainActivity extends AppCompatActivity
         fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
     }
 
+    private Fragment mainFragment = new MainFragment();
+    private Fragment scheduleFragment = new ScheduleFragment();
+    private Fragment aboudFragment = new AboutFragment();
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         Fragment fragment = null;
 
         switch (item.getItemId()) {
             case R.id.nav_main:
-                fragment = new MainFragment();
+                fragment = mainFragment;
                 break;
             case R.id.nav_schedule:
-                fragment = new ScheduleFragment();
+                fragment = scheduleFragment;
                 break;
             case R.id.nav_about:
-                fragment = new AboutFragment();
+                fragment = aboudFragment;
                 break;
         }
 
